@@ -1,5 +1,5 @@
 Binary Bosses <br />
-      NAME                SID         CONTRIBUTION
+      NAME                       SID                  CONTRIBUTION
       
    Shubham Mishra        -202301100           -50%
    
