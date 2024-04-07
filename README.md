@@ -1,8 +1,8 @@
 Binary Bosses <br />
 
-        NAME            SID         CONTRIBUTION
-   Shubham Mishra     -202301100       -50%
+        NAME                SID         CONTRIBUTION
+   Shubham Mishra        -202301100           -50%
    
-   Vishesh Sharma     -202301127       -30%
+   Vishesh Sharma        -202301127            -30%
    
-   Bhavya             -202301169       -20%
+   Bhavya  Thakkar       -202301169           -20%
