@@ -1,0 +1,132 @@
+#include <bits/stdc++.h>
+    using namespace std;
+
+    class Member {
+    public:
+        vector<int> preference;
+        vector<int> availSlot;
+        int p;
+
+        Member(int p, vector<int> availSlots, vector<int> preference)
+            : p(p), availSlot(availSlots), preference(preference) {}
+    };
+
+    class Schedule {
+    public:
+        vector<int> liveData;
+        vector<Member> members;
+        vector<int> finalTimings;
+        unordered_map<int, vector<int>> slotsToMembers;
+
+        Schedule(vector<int> liveData, vector<Member> members)
+            : liveData(liveData), members(members), finalTimings(168, -1) {
+            for (int i = 0; i < 168; i++) {
+                for (int j = 0; j < members.size(); j++) {
+                    if (find(members[j].availSlot.begin(), members[j].availSlot.end(), i) != members[j].availSlot.end()) {
+                        slotsToMembers[i].push_back(j);
+                    }
+                }
+            }
+        }
+
+        void recordAndScheduleShows() {
+            for (int i = 0; i < 168; i++) {
+                auto &availableMembers = slotsToMembers[i];
+                if (availableMembers.empty()) continue;
+
+                if (availableMembers.size() == 1) {
+                    int memberIndex = availableMembers[0];
+                    if (!members[memberIndex].preference.empty()) {
+                        finalTimings[i] = members[memberIndex].preference.front();
+                        members[memberIndex].preference.erase(members[memberIndex].preference.begin());
+                    }
+                } else {
+                    int maxP = INT_MIN, chosenMember = -1;
+                    for (int memberIndex : availableMembers) {
+                        if (members[memberIndex].p > maxP) {
+                            maxP = members[memberIndex].p;
+                            chosenMember = memberIndex;
+                        }
+                    }
+                    if (chosenMember != -1 && !members[chosenMember].preference.empty()) {
+                        finalTimings[i] = members[chosenMember].preference.front();
+                        members[chosenMember].p--;
+                    }
+                }
+            }
+        }
+    };
+
+    void displayMemberDetails(const Member& member) {
+        cout << "Member Priority: " << member.p << "\n";
+        cout << "Available Slots: ";
+        for (int slot : member.availSlot) {
+            cout << slot << " ";
+        }
+        cout << "\nPreference: ";
+        for (int pref : member.preference) {
+            cout << pref << " ";
+        }
+        cout << "\n\n";
+    }
+
+    void displayScheduleDetails(const Schedule& schedule) {
+        cout << "Final Timings for Shows:\n";
+        for (int i = 0; i < schedule.finalTimings.size(); i++) {
+            if (schedule.finalTimings[i] != -1) {
+                cout << "Hour " << i << ": Show " << schedule.finalTimings[i] << "\n";
+            }
+        }
+    }
+
+    int main() {
+        freopen("timings.txt", "r", stdin);
+        vector<int> liveData;
+        for(int i = 0; i < 168; i++) {
+            int n; cin >> n;
+            liveData.push_back(n);
+        }
+        int noOfMembers;
+        cin >> noOfMembers;
+        vector<Member> members;
+        for(int i = 0; i < noOfMembers; i++) {
+            int p; cin >> p;
+            vector<int> availTimes;
+            int availTimesSize; cin >> availTimesSize;
+            for(int j = 0; j < availTimesSize; j++) {
+                int k;
+                cin >> k;
+                availTimes.push_back(k);
+            }
+            vector<int> favShows;
+            int favShowsSize; cin >> favShowsSize;
+            for(int j = 0; j < favShowsSize; j++) {
+                int k;
+                cin >> k;
+                favShows.push_back(k);
+            }
+            members.emplace_back(p, availTimes, favShows);
+        }
+        Schedule schedule(liveData, members);
+
+        schedule.recordAndScheduleShows();
+
+        // For demonstration, we'll just print the final schedule
+        cout << "Final Schedule (hour: show):" << endl;
+        for (int hour = 0; hour < 168; hour++) {
+            if (schedule.finalTimings[hour] != -1) {
+                cout << "Hour " << hour << ": Show " << schedule.finalTimings[hour] << endl;
+            }
+            // Add an else block to handle hours with no scheduled show
+            else {
+                cout << "Hour " << hour << ": No show scheduled" << endl;
+            }
+        }
+        // for(int i = 0; i < members.size(); i++) {
+        //     displayMemberDetails(members[i]);
+        //     cout << endl;
+        // }
+        // displayScheduleDetails(schedule);
+
+        return 0;
+    }
